@@ -49,13 +49,33 @@ TIM_HandleTypeDef htim2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_TIM2_Init(void);
+static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void LED1(void)
+{
+  HAL_GPIO_TogglePin(GPIOA, LED1_Pin);
+}
+void LED2(void)
+{
+  HAL_GPIO_TogglePin(GPIOA, LED2_Pin);
+}
+void LED3(void)
+{
+  HAL_GPIO_TogglePin(GPIOA, LED3_Pin);
+}
+void LED4(void)
+{
+  HAL_GPIO_TogglePin(GPIOA, LED4_Pin);
+}
+void LED5(void)
+{
+  HAL_GPIO_TogglePin(GPIOA, LED5_Pin);
+}
 /* USER CODE END 0 */
 
 /**
@@ -86,8 +106,15 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_TIM2_Init();
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_TIM_Base_Start_IT(&htim2);
+  SCH_Init();
+  SCH_Add_Task(LED1, 100, 100);
+  SCH_Add_Task(LED2, 200, 200);
+  SCH_Add_Task(LED3, 300, 300);
+  SCH_Add_Task(LED4, 400, 400);
+  SCH_Add_Task(LED5, 500, 0);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -95,7 +122,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+	  SCH_Dispatch_Tasks();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -181,8 +208,38 @@ static void MX_TIM2_Init(void)
 
 }
 
-/* USER CODE BEGIN 4 */
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, LED1_Pin|LED2_Pin|LED3_Pin|LED4_Pin
+                          |LED5_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : LED1_Pin LED2_Pin LED3_Pin LED4_Pin
+                           LED5_Pin */
+  GPIO_InitStruct.Pin = LED1_Pin|LED2_Pin|LED3_Pin|LED4_Pin
+                          |LED5_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+}
+
+/* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  SCH_Update();
+}
 /* USER CODE END 4 */
 
 /**
