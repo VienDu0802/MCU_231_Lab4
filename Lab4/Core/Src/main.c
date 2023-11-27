@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <stdio.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -36,7 +37,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+volatile uint32_t timer_ticks = 0; // counter interrupt
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -76,6 +77,7 @@ void LED5(void)
 {
   HAL_GPIO_TogglePin(GPIOA, LED5_Pin);
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -85,7 +87,17 @@ void LED5(void)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	uint32_t get_time(void) {
+	    return timer_ticks * 10;  //
+	}
 
+	void Callback_10ms() {
+	    printf("10ms callback: %lu\n", get_time());
+	}
+
+	void Callback_500ms() {
+	    printf("500ms callback: %lu\n", get_time());
+	}
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -94,7 +106,8 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  SCH_Add_Task(Callback_10ms, 1, 1);
+  SCH_Add_Task(Callback_500ms, 50, 50);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -110,11 +123,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2);
   SCH_Init();
-  SCH_Add_Task(LED1, 100, 100);
-  SCH_Add_Task(LED2, 200, 200);
-  SCH_Add_Task(LED3, 300, 300);
-  SCH_Add_Task(LED4, 400, 400);
-  SCH_Add_Task(LED5, 500, 0);
+  SCH_Add_Task(LED1, 100, 50);
+  SCH_Add_Task(LED2, 200, 100);
+  SCH_Add_Task(LED3, 300, 150);
+  SCH_Add_Task(LED4, 400, 200);
+  SCH_Add_Task(LED5, 500, 250);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -238,7 +251,10 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  SCH_Update();
+    if (htim->Instance == TIM2) {
+        timer_ticks++;  // Tăng biến đếm mỗi khi có ngắt từ TIM2
+        SCH_Update();
+    }
 }
 /* USER CODE END 4 */
 
@@ -251,6 +267,7 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+
   while (1)
   {
   }

@@ -91,3 +91,18 @@ java.lang.Exception: A resource exists with a different case: '/Lab4'.
 
 !ENTRY org.eclipse.cdt.core 1 0 2023-11-15 10:15:06.851
 !MESSAGE Indexed 'Microcontroller-Lab-4' (20 sources, 97 headers) in 2.33 sec: 7,471 declarations; 34,417 references; 7 unresolved inclusions; 295 syntax errors; 1,050 unresolved names (2.4%)
+!SESSION 2023-11-27 13:25:07.813 -----------------------------------------------
+eclipse.buildId=Version 1.7.0
+java.version=11.0.10
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2023-11-27 13:25:21.425
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2023-11-27 13:25:21.550
+!MESSAGE Log4j initialized with config file D:\VXL_VDK\LAB\LAB_4\GIT-LAB4\.metadata\.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2023-11-27 13:25:29.789
+!MESSAGE Started RMI Server, listening on port 41337
